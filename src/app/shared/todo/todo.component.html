@@ -1,0 +1,73 @@
+<section class="todo-section">
+  <div *ngIf="!readingTodo" class="todo-form">
+    <mat-form-field class="example-full-width">
+      <input
+        matInput
+        placeholder="What needs to be done?"
+        [formControl]="newTodoForm"
+      />
+    </mat-form-field>
+    <button
+      color="primary"
+      mat-flat-button
+      (click)="createTodo(); newTodoForm.reset()"
+      [disabled]="newTodoForm.invalid"
+      class="send-button"
+    >
+      send
+    </button>
+  </div>
+
+  <div *ngIf="readingTodo" class="todo">
+    <div class="todo__container">
+      <div class="checkbox-container">
+        <mat-checkbox
+          class="example-margin"
+          [checked]="readingTodo.isCompleted"
+          (change)="
+            readingTodo.isCompleted = !readingTodo.isCompleted; editTodo()
+          "
+        >
+          <p
+            *ngIf="isOpened === false"
+            [class.text-decoration]="readingTodo.isCompleted"
+            class="todo-title"
+          >
+            {{ readingTodo.title }}
+          </p>
+        </mat-checkbox>
+
+        <div *ngIf="isOpened === true">
+          <mat-form-field class="example-full-width">
+            <input
+              class="edit-todo-form"
+              matInput
+              value="{{ readingTodo.title }}"
+              [formControl]="editTodoForm"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="todo-functional">
+        <button
+          mat-flat-button
+          *ngIf="isOpened === false"
+          (click)="isOpened = true"
+        >
+          edit
+        </button>
+
+        <button
+          *ngIf="isOpened === true"
+          mat-flat-button
+          (click)="editTodo(); isOpened = false"
+          [disabled]="editTodoForm.invalid"
+        >
+          send
+        </button>
+
+        <button mat-flat-button (click)="deleteTodo()">delete</button>
+      </div>
+    </div>
+  </div>
+</section>

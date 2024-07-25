@@ -1,0 +1,71 @@
+.todo-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-decoration {
+  text-decoration: line-through;
+}
+
+.todo {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 40%;
+  height: 70px;
+
+  &__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+}
+
+.todo-form {
+  display: flex;
+  align-items: center;
+}
+
+.send-button {
+  margin-left: 15px;
+}
+
+.todo-title {
+  margin: 0;
+}
+
+.example-margin {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.example-full-width {
+  width: 300px;
+  height: 70px;
+  padding: 0;
+}
+
+.checkbox-container {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+}
+
+.edit-todo-form {
+  width: 60%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.todo-functional {
+  width: 20%;
+  display: flex;
+  border-left: 1px solid;
+}
+
+

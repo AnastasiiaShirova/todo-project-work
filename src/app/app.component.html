@@ -1,0 +1,70 @@
+<section class="main-section">
+  <div class="main-section__container">
+    <p class="title">Todos</p>
+    <div class="form-container">
+      <app-todo (newTodo)="addTodo($event)"></app-todo>
+    </div>
+    <app-todo
+      class="todos"
+      *ngFor="let todo of todosArr; let i = index"
+      [readingTodo]="todo"
+      (editTodoEmitter)="editTodo(todo, $event)"
+      (deleteTodoEmitter)="deleteTodo(i)"
+    ></app-todo>
+    <div
+      class="sort-buttons"
+      *ngIf="todosArr.length > 0 || isSortActive === true"
+    >
+      <div class="no-absolute">
+        <div class="no-absolute__complete-todo">
+          <p class="counter">{{ activeTodosCounter() }} items left</p>
+          <button
+            mat-flat-button
+            color="primary"
+            *ngIf="todosArr.length > 0"
+            (click)="
+              completeOrActiveTodos(); isTodosCompleted = !isTodosCompleted
+            "
+            class="complete-all-button"
+          >
+            {{ isTodosCompleted ? "active all" : "complete all" }}
+          </button>
+        </div>
+        <div class="absolute-buttons">
+          <button
+            mat-flat-button
+            color="accent"
+            class="sort-buttons__button"
+            (click)="readTodos(); isSortActive = !isSortActive"
+          >
+            all
+          </button>
+          <button
+            mat-flat-button
+            color="accent"
+            class="sort-buttons__button"
+            (click)="getActiveTodos(); isSortActive = !isSortActive"
+          >
+            active
+          </button>
+          <button
+            mat-flat-button
+            color="accent"
+            class="sort-buttons__button"
+            (click)="getCompletedTodos(); isSortActive = !isSortActive"
+          >
+            completed
+          </button>
+        </div>
+        <button
+          mat-flat-button
+          color="accent"
+          *ngIf="todosArr.length - activeTodosCounter() > 0"
+          (click)="deleteComplited()"
+        >
+          clear completed
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
