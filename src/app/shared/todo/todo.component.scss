@@ -14,7 +14,6 @@
   justify-content: space-evenly;
   align-items: center;
   width: 40%;
-  height: 70px;
 
   &__container {
     display: flex;
@@ -22,6 +21,7 @@
     align-items: center;
     margin-bottom: 15px;
     width: 100%;
+    height: max-content;
   }
 }
 
@@ -36,12 +36,8 @@
 
 .todo-title {
   margin: 0;
-}
-
-.example-margin {
-  display: flex;
-  align-items: center;
-  margin-right: 8px;
+  white-space: break-spaces;
+  word-break: break-all;
 }
 
 .example-full-width {
@@ -54,7 +50,15 @@
   width: 80%;
   display: flex;
   flex-direction: row;
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+  }
 }
+
+
 
 .edit-todo-form {
   width: 60%;
