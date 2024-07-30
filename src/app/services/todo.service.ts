@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TodoInterface } from '../shared/todo/interfaces/todo-interface';
-import { Observable, of } from 'rxjs';
+import { Todo } from '../shared/types/interfaces';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,36 +8,56 @@ import { Observable, of } from 'rxjs';
 export class TodoService {
   constructor() {}
 
-  todoArr: TodoInterface[] = [];
-  activeTodosArr: TodoInterface[] = [];
-  completedTodosArr: TodoInterface[] = [];
+  todoList: BehaviorSubject<Todo[]> = new BehaviorSubject<Todo[]>([]);
 
-  addTodo(title: string): Observable<TodoInterface> {
-    let newTodo: TodoInterface = {
-      id: this.todoArr.length,
-      title,
-      isCompleted: false,
-    };
-    this.todoArr.push(newTodo);
-    return of(newTodo);
-  }
+  todoList$ = this.todoList.asObservable();
 
-  getTodos(): Observable<TodoInterface[]> {
-    return of([...this.todoArr]);
-  }
+  activeTodoList: Observable<Todo[]> = this.todoList$.pipe(
+    map((todos: Todo[]) => todos.filter((todo: Todo) => !todo.isCompleted)
+  ));
 
-  deleteTodo(id: number): Observable<TodoInterface> {
-    let index = this.todoArr.findIndex((todo) => todo.id === id);
-    let deletedTodo = this.todoArr[index];
-    if (index !== -1) {
-      this.todoArr.splice(index, 1);
+  activeTodosCounter: Observable<number> = this.activeTodoList.pipe(
+    map((todos) => todos.length)
+  );
+
+  completedTodoList: Observable<Todo[]> = this.todoList$.pipe(
+    map((todos: Todo[]) => todos.filter((todo: Todo) => todo.isCompleted)
+  ));
+
+  addTodo(title: string): void {
+    let currentTodoList = this.todoList.getValue();
+    let newTodo: Todo;
+    if(currentTodoList.length > 0) {
+      newTodo = {
+        id: currentTodoList[currentTodoList.length - 1].id + 1,
+        title,
+        isCompleted: false,
+      };
+    } else {
+      newTodo = {
+        id: 1,
+        title,
+        isCompleted: false,
+      };
     }
-    return of(deletedTodo);
+    currentTodoList.push(newTodo);
+    this.todoList.next(currentTodoList);
   }
 
-  editTodo(editedTodo: TodoInterface): Observable<TodoInterface> {
-    let oldTodo = this.todoArr.find((t) => editedTodo.id === t.id);
-    let newTodo: TodoInterface = oldTodo!;
+  deleteTodo(id: number): void {
+    let currentTodoList = this.todoList.getValue();
+    let index = currentTodoList.findIndex((todo) => todo.id === id);
+    if (index !== -1) {
+      currentTodoList.splice(index, 1);
+    }
+    this.todoList.next(currentTodoList);
+  }
+
+  editTodo(editedTodo: Todo): void {
+    let currentTodoList = this.todoList.getValue();
+    let oldTodoIndex = currentTodoList.findIndex((t) => editedTodo.id === t.id);
+    let oldTodo = currentTodoList[oldTodoIndex];
+    let newTodo: Todo = oldTodo!;
 
     if (oldTodo) {
       newTodo = {
@@ -45,45 +65,30 @@ export class TodoService {
         title: editedTodo.title || oldTodo.title,
         isCompleted: editedTodo.isCompleted,
       };
-      this.todoArr.splice(newTodo.id, 1, newTodo);
+
+      currentTodoList.splice(oldTodoIndex, 1, newTodo);
     }
-    return of(newTodo);
-  }
-
-  getActiveTodos() {
-    this.activeTodosArr = this.todoArr.filter(
-      (todo) => todo.isCompleted === false
-    );
-    return of(this.activeTodosArr);
-  }
-
-  getCompletedTodos() {
-    this.completedTodosArr = this.todoArr.filter(
-      (todo) => todo.isCompleted === true
-    );
-    return of(this.completedTodosArr);
+    this.todoList.next(currentTodoList);
   }
 
   completeAllTodos() {
-    this.todoArr = this.todoArr.map(
-      (todo) => (todo = { ...todo, isCompleted: true })
+    let currentTodoList = this.todoList.getValue();
+    currentTodoList = currentTodoList.map(
+      (todo) => todo = { ...todo, isCompleted: true }
     );
-    return of([...this.todoArr]);
+    this.todoList.next(currentTodoList);
   }
 
   activeAllTodos() {
-    this.todoArr = this.todoArr.map(
-      (todo) => (todo = { ...todo, isCompleted: false })
+    let currentTodoList = this.todoList.getValue();
+    currentTodoList = currentTodoList.map(
+      (todo) => todo = { ...todo, isCompleted: false }
     );
-    return of([...this.todoArr]);
+    this.todoList.next(currentTodoList);
   }
 
   deleteCompleted() {
-    for (let i = 0; i < this.todoArr.length; i++) {
-      if (this.todoArr[i].isCompleted === true) {
-        this.todoArr.splice(i, 1);
-      }
-    }
-    return of([...this.todoArr]);
+    let currentTodoList = this.todoList.getValue();
+    this.todoList.next(currentTodoList.filter((todo) => todo.isCompleted === false));
   }
 }

@@ -1,39 +1,39 @@
 <section class="todo-section">
-  <div *ngIf="!readingTodo" class="todo-form">
+  <div *ngIf="!currentTodo" class="todo-form">
     <mat-form-field class="example-full-width">
       <input
         matInput
         placeholder="What needs to be done?"
-        [formControl]="newTodoForm"
+        [formControl]="createTodoForm"
       />
     </mat-form-field>
     <button
       color="primary"
       mat-flat-button
-      (click)="createTodo(); newTodoForm.reset()"
-      [disabled]="newTodoForm.invalid"
+      (click)="createTodo(); createTodoForm.reset()"
+      [disabled]="createTodoForm.invalid"
       class="send-button"
     >
       send
     </button>
   </div>
 
-  <div *ngIf="readingTodo" class="todo">
+  <div *ngIf="currentTodo" class="todo">
     <div class="todo__container">
       <div class="checkbox-container">
         <mat-checkbox
           class="checkbox-container__checkbox"
-          [checked]="readingTodo.isCompleted"
+          [checked]="currentTodo.isCompleted"
           (change)="
-            readingTodo.isCompleted = !readingTodo.isCompleted; editTodo()
+          currentTodo.isCompleted = !currentTodo.isCompleted; editTodo()
           "
         >
           <p
             *ngIf="isOpened === false"
-            [class.text-decoration]="readingTodo.isCompleted"
+            [class.text-decoration]="currentTodo.isCompleted"
             class="todo-title"
           >
-            {{ readingTodo.title }}
+            {{ currentTodo.title }}
           </p>
         </mat-checkbox>
 
@@ -42,7 +42,7 @@
             <input
               class="edit-todo-form"
               matInput
-              value="{{ readingTodo.title }}"
+              value="{{ currentTodo.title }}"
               [formControl]="editTodoForm"
             />
           </mat-form-field>

@@ -1,83 +1,46 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TodoService } from './services/todo.service';
-import { TodoInterface } from './shared/todo/interfaces/todo-interface';
+import { Todo } from './shared/types/interfaces';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'todo-project';
 
   constructor(public todoService: TodoService) {}
 
-  todosArr: TodoInterface[] = [];
   isTodosCompleted: boolean = false;
-  isSortActive: boolean = false;
+  isFilterActive: boolean = false;
+  whichFilterActive: boolean | null = null;
 
-  activeTodosCounter() {
-    let res = 0;
-    for (let i = 0; i < this.todosArr.length; i++) {
-      if (this.todosArr[i].isCompleted === false) {
-        res = res + 1;
-      }
+  todoList: Todo[] = [];
+  activeTodoList: Todo[] =[];
+  completedTodoList: Todo[] =[];
+
+  getFilter() {
+    if (this.whichFilterActive === null) {
+      return this.todoList;
+    } else if (this.whichFilterActive === true) {
+      return this.activeTodoList;
+    } else {
+      return this.completedTodoList;
     }
-    return res;
   }
 
-  addTodo(todo: TodoInterface) {
-    this.todosArr.push(todo);
-  }
-
-  readTodos() {
-    this.todoService.getTodos().subscribe((data) => (this.todosArr = data));
-  }
-
-  deleteTodo(index: number) {
-    this.todosArr.splice(index, 1);
-  }
-
-  editTodo(oldTodo: TodoInterface, newTodo: TodoInterface) {
-    oldTodo.title = newTodo.title;
-    oldTodo.isCompleted = newTodo.isCompleted;
-  }
-
-  getActiveTodos() {
-    this.todoService
-      .getActiveTodos()
-      .subscribe((data) => (this.todosArr = data));
-  }
-
-  getCompletedTodos() {
-    this.todoService
-      .getCompletedTodos()
-      .subscribe((data) => (this.todosArr = data));
+  ngOnInit(): void {
+    this.todoService.todoList$.subscribe((todos) => this.todoList = todos);
+    this.todoService.activeTodoList.subscribe((todos) => this.activeTodoList = todos);
+    this.todoService.completedTodoList.subscribe((todos) => this.completedTodoList = todos);
   }
 
   completeOrActiveTodos() {
-    if (this.isTodosCompleted === false) {
-      this.completeAllTodos();
+    if(!this.isTodosCompleted) {
+      this.todoService.completeAllTodos();
     } else {
-      this.activeAllTodos();
+      this.todoService.activeAllTodos();
     }
-  }
-
-  completeAllTodos() {
-    this.todoService
-      .completeAllTodos()
-      .subscribe((data) => (this.todosArr = data));
-  }
-
-  activeAllTodos() {
-    this.todoService
-      .activeAllTodos()
-      .subscribe((data) => (this.todosArr = data));
-  }
-
-  deleteComplited() {
-    this.todoService
-      .deleteCompleted()
-      .subscribe((data) => (this.todosArr = data));
   }
 }
