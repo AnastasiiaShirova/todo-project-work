@@ -17,8 +17,8 @@ export class AppComponent implements OnInit {
   whichFilterActive: boolean | null = null;
 
   todoList: Todo[] = [];
-  activeTodoList: Todo[] =[];
-  completedTodoList: Todo[] =[];
+  activeTodoList: Todo[] = [];
+  completedTodoList: Todo[] = [];
 
   getFilter() {
     if (this.whichFilterActive === null) {
@@ -31,16 +31,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.todoService.todoList$.subscribe((todos) => this.todoList = todos);
-    this.todoService.activeTodoList.subscribe((todos) => this.activeTodoList = todos);
-    this.todoService.completedTodoList.subscribe((todos) => this.completedTodoList = todos);
-  }
-
-  completeOrActiveTodos() {
-    if(!this.isTodosCompleted) {
-      this.todoService.completeAllTodos();
-    } else {
-      this.todoService.activeAllTodos();
-    }
+    this.todoService.todoList$.subscribe((todos) => (this.todoList = todos));
+    this.todoService.activeTodoList.subscribe(
+      (todos) => (this.activeTodoList = todos)
+    );
+    this.todoService.completedTodoList.subscribe(
+      (todos) => (this.completedTodoList = todos)
+    );
   }
 }
