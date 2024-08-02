@@ -1,11 +1,13 @@
 <section class="todo-section">
   <div *ngIf="!currentTodo" class="todo-form">
     <mat-form-field class="example-full-width">
-      <input
+      <form [formGroup]="createTodoForm">
+        <input
         matInput
         placeholder="What needs to be done?"
-        [formControl]="createTodoForm"
+        formControlName="createTodo"
       />
+      </form>
     </mat-form-field>
     <button
       color="primary"
@@ -24,9 +26,7 @@
         <mat-checkbox
           class="checkbox-container__checkbox"
           [checked]="currentTodo.isCompleted"
-          (change)="
-            currentTodo.isCompleted = !currentTodo.isCompleted; editTodo()
-          "
+          (change)="editTodo(true)"
         >
           <p
             *ngIf="isOpened === false"
@@ -51,16 +51,16 @@
       <div class="todo-functional">
         <button
           mat-flat-button
-          *ngIf="isOpened === false"
+          *ngIf="!isOpened"
           (click)="isOpened = true"
         >
           edit
         </button>
 
         <button
-          *ngIf="isOpened === true"
+          *ngIf="isOpened"
           mat-flat-button
-          (click)="editTodo(); isOpened = false"
+          (click)="editTodo(false); isOpened = false"
           [disabled]="editTodoForm.invalid"
         >
           send
