@@ -27,6 +27,7 @@ export class TodoComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    console.log('inited');
     this.editTodoForm.patchValue(this.currentTodo?.title);
     this.changeDetection.detectChanges();
   }
@@ -50,6 +51,7 @@ export class TodoComponent implements OnInit {
         title: this.editTodoForm.getRawValue() || '',
         isCompleted: titleMode ? !this.currentTodo!.isCompleted : this.currentTodo!.isCompleted,
       });
+      this.isOpened = false;
       this.changeDetection.detectChanges();
   }
 }

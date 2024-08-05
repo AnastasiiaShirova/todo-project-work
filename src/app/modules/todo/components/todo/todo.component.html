@@ -56,7 +56,7 @@
         <button
           *ngIf="isOpened"
           mat-flat-button
-          (click)="editTodo(false); isOpened = false"
+          (click)="editTodo(false)"
           [disabled]="editTodoForm.invalid"
         >
           send
