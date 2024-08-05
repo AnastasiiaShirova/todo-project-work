@@ -53,6 +53,6 @@ export class TodoListComponent implements OnInit {
   }
 
   trackByItems(index: number, item: Todo) {
-    return `${item.id} ${item.title} ${item.isCompleted}`;
+    return item.id;
   }
 }
