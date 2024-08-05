@@ -3,10 +3,10 @@
     <mat-form-field class="example-full-width">
       <form [formGroup]="createTodoForm">
         <input
-        matInput
-        placeholder="What needs to be done?"
-        formControlName="createTodo"
-      />
+          matInput
+          placeholder="What needs to be done?"
+          formControlName="createTodo"
+        />
       </form>
     </mat-form-field>
     <button
@@ -49,11 +49,7 @@
         </div>
       </div>
       <div class="todo-functional">
-        <button
-          mat-flat-button
-          *ngIf="!isOpened"
-          (click)="isOpened = true"
-        >
+        <button mat-flat-button *ngIf="!isOpened" (click)="isOpened = true">
           edit
         </button>
 

@@ -1,75 +1,75 @@
 <app-todo
-      class="todos"
-      *ngFor="let todo of getFilter(); let i = index"
-      [currentTodo]="todo"
-    ></app-todo>
-    <div
-      class="sort-buttons"
-      *ngIf="todoList.length > 0 || isFilterActive === true"
-    >
-      <div class="no-absolute">
-        <div class="no-absolute__complete-todo">
-          <p class="counter">
-            {{ todoService.activeTodosCounter | async }} items left
-          </p>
-          <button
-            mat-flat-button
-            color="primary"
-            *ngIf="todoList.length > 0"
-            (click)="
-              todoService.completeOrActiveAllTodos(isTodosCompleted);
-              isTodosCompleted = !isTodosCompleted
-            "
-            class="complete-all-button"
-          >
-            {{ isTodosCompleted ? "active all" : "complete all" }}
-          </button>
-        </div>
-        <div class="absolute-buttons">
-          <button
-            mat-flat-button
-            color="accent"
-            class="sort-buttons__button"
-            (click)="
-              isFilterActive = !isFilterActive;
-              whichFilterActive = null;
-              getFilter()
-            "
-          >
-            all
-          </button>
-          <button
-            mat-flat-button
-            color="accent"
-            class="sort-buttons__button"
-            (click)="
-              isFilterActive = !isFilterActive;
-              whichFilterActive = true;
-              getFilter()
-            "
-          >
-            active
-          </button>
-          <button
-            mat-flat-button
-            color="accent"
-            class="sort-buttons__button"
-            (click)="
-              isFilterActive = !isFilterActive;
-              whichFilterActive = false;
-              getFilter()
-            "
-          >
-            completed
-          </button>
-        </div>
-        <button
-          mat-flat-button
-          color="accent"
-          *ngIf="completedTodoList.length > 0"
-          (click)="todoService.deleteCompleted()"
-        >
-          clear completed
-        </button>
-      </div>
+  class="todos"
+  *ngFor="let todo of getFilter(); trackBy: trackByItems"
+  [currentTodo]="todo"
+></app-todo>
+<div
+  class="sort-buttons"
+  *ngIf="todoList.length > 0 || isFilterActive === true"
+>
+  <div class="no-absolute">
+    <div class="no-absolute__complete-todo">
+      <p class="counter">
+        {{ todoService.activeTodosCounter | async }} items left
+      </p>
+      <button
+        mat-flat-button
+        color="primary"
+        *ngIf="todoList.length > 0"
+        (click)="
+          todoService.completeOrActiveAllTodos(isTodosCompleted);
+          isTodosCompleted = !isTodosCompleted
+        "
+        class="complete-all-button"
+      >
+        {{ isTodosCompleted ? "active all" : "complete all" }}
+      </button>
     </div>
+    <div class="absolute-buttons">
+      <button
+        mat-flat-button
+        color="accent"
+        class="sort-buttons__button"
+        (click)="
+          isFilterActive = !isFilterActive;
+          whichFilterActive = null;
+          getFilter()
+        "
+      >
+        all
+      </button>
+      <button
+        mat-flat-button
+        color="accent"
+        class="sort-buttons__button"
+        (click)="
+          isFilterActive = !isFilterActive;
+          whichFilterActive = true;
+          getFilter()
+        "
+      >
+        active
+      </button>
+      <button
+        mat-flat-button
+        color="accent"
+        class="sort-buttons__button"
+        (click)="
+          isFilterActive = !isFilterActive;
+          whichFilterActive = false;
+          getFilter()
+        "
+      >
+        completed
+      </button>
+    </div>
+    <button
+      mat-flat-button
+      color="accent"
+      *ngIf="completedTodoList.length > 0"
+      (click)="todoService.deleteCompleted()"
+    >
+      clear completed
+    </button>
+  </div>
+</div>
