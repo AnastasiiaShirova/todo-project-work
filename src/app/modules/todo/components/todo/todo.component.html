@@ -37,7 +37,7 @@
           </p>
         </mat-checkbox>
 
-        <div *ngIf="isOpened === true">
+        <div *ngIf="isOpened">
           <mat-form-field class="example-full-width">
             <input
               class="edit-todo-form"
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="todo-functional">
-        <button mat-flat-button *ngIf="!isOpened" (click)="isOpened = true">
+        <button mat-flat-button *ngIf="!isOpened" (click)="changeIsOpened()">
           edit
         </button>
 

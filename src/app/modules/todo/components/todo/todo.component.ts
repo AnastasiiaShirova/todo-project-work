@@ -27,7 +27,6 @@ export class TodoComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    console.log('inited');
     this.editTodoForm.patchValue(this.currentTodo?.title);
     this.changeDetection.detectChanges();
   }
@@ -53,5 +52,9 @@ export class TodoComponent implements OnInit {
       });
       this.isOpened = false;
       this.changeDetection.detectChanges();
+  }
+
+  changeIsOpened() {
+    this.isOpened = true;
   }
 }
