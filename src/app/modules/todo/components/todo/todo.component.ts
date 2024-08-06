@@ -28,19 +28,16 @@ export class TodoComponent implements OnInit {
 
   ngOnInit(): void {
     this.editTodoForm.patchValue(this.currentTodo?.title);
-    this.changeDetection.detectChanges();
   }
 
   createTodo() {
     this.todoService
       .addTodo(this.createTodoForm.getRawValue().createTodo);
-      this.changeDetection.detectChanges();
   }
 
   deleteTodo() {
     this.todoService
       .deleteTodo(this.currentTodo!.id);
-      this.changeDetection.detectChanges();
   }
 
   editTodo(titleMode: boolean) {
@@ -51,7 +48,6 @@ export class TodoComponent implements OnInit {
         isCompleted: titleMode ? !this.currentTodo!.isCompleted : this.currentTodo!.isCompleted,
       });
       this.isOpened = false;
-      this.changeDetection.detectChanges();
   }
 
   changeIsOpened() {

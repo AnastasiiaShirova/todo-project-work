@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnInit,
 } from '@angular/core';
@@ -16,8 +15,7 @@ import { Todo } from 'src/app/shared/types/interfaces';
 })
 export class TodoListComponent implements OnInit {
   constructor(
-    public todoService: TodoService,
-    private changeDetection: ChangeDetectorRef
+    public todoService: TodoService
   ) {}
 
   isTodosCompleted: boolean = false;
@@ -31,7 +29,6 @@ export class TodoListComponent implements OnInit {
     this.todoList$ = this.todoService.todoList$;
     this.activeTodoList$ = this.todoService.activeTodoList;
     this.completedTodoList$ = this.todoService.completedTodoList;
-    this.changeDetection.detectChanges();
   }
 
   trackByItems(index: number, item: Todo) {
