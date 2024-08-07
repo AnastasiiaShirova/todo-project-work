@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TodoService } from 'src/app/services/todo.service';
 import { Todo } from 'src/app/shared/types/interfaces';
@@ -14,15 +10,13 @@ import { Todo } from 'src/app/shared/types/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoListComponent implements OnInit {
-  constructor(
-    public todoService: TodoService
-  ) {}
+  constructor(public todoService: TodoService) {}
 
   isTodosCompleted: boolean = false;
   whichFilterActive: boolean | null = null;
 
   todoList$?: Observable<Todo[]>;
-  activeTodoList$?:  Observable<Todo[]>;
+  activeTodoList$?: Observable<Todo[]>;
   completedTodoList$?: Observable<Todo[]>;
 
   ngOnInit(): void {
@@ -35,7 +29,7 @@ export class TodoListComponent implements OnInit {
     return item.id;
   }
 
-  makeFilterTodos(filterMode: null|boolean): void {
+  makeFilterTodos(filterMode: null | boolean): void {
     this.whichFilterActive = filterMode;
   }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TodoService } from 'src/app/services/todo.service';
 import { Todo } from '../../../../shared/types/interfaces';
@@ -15,7 +15,7 @@ export class TodoComponent implements OnInit {
 
   isOpened: boolean = false;
 
-  constructor(public todoService: TodoService, private changeDetection: ChangeDetectorRef) {}
+  constructor(public todoService: TodoService) {}
 
   createTodoForm: FormGroup = new FormGroup({
     createTodo: new FormControl('', Validators.required),
@@ -36,18 +36,22 @@ export class TodoComponent implements OnInit {
   }
 
   deleteTodo() {
-    this.todoService
-      .deleteTodo(this.currentTodo!.id);
+    if(this.currentTodo) {
+      this.todoService
+      .deleteTodo(this.currentTodo.id);
+    }
   }
 
   editTodo(titleMode: boolean) {
+    if(this.currentTodo) {
       this.todoService
       .editTodo({
         id: this.currentTodo!.id,
         title: this.editTodoForm.getRawValue() || '',
-        isCompleted: titleMode ? !this.currentTodo!.isCompleted : this.currentTodo!.isCompleted,
+        isCompleted: titleMode ? !this.currentTodo.isCompleted : this.currentTodo.isCompleted,
       });
       this.isOpened = false;
+    }
   }
 
   changeIsOpened() {
