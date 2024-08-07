@@ -24,67 +24,61 @@
   </div>
 </ng-container>
 
-<ng-container *ngIf="(todoList$ | async) as list">
-<div
-  class="sort-buttons"
-  *ngIf="list.length > 0"
->
-  <div class="no-absolute">
-    <div class="no-absolute__complete-todo">
-      <p class="counter">
-        {{ todoService.activeTodosCounter | async }} items left
-      </p>
+<ng-container *ngIf="todoList$ | async as list">
+  <div class="sort-buttons" *ngIf="list.length > 0">
+    <div class="no-absolute">
+      <div class="no-absolute__complete-todo">
+        <p class="counter">
+          {{ todoService.activeTodosCounter | async }} items left
+        </p>
 
         <button
           mat-flat-button
           color="primary"
           *ngIf="list.length > 0"
-          (click)="
-            todoService.completeOrActiveAllTodos(isTodosCompleted);
-            changeIsTodosCompleted()
-          "
+          (click)="changeAllTodos()"
           class="complete-all-button"
         >
           {{ isTodosCompleted ? "active all" : "complete all" }}
         </button>
       </div>
 
-    <div class="absolute-buttons">
-      <button
-        mat-flat-button
-        color="accent"
-        class="sort-buttons__button"
-        (click)="makeFilterTodos(null)"
-      >
-        all
-      </button>
-      <button
-        mat-flat-button
-        color="accent"
-        class="sort-buttons__button"
-        (click)="makeFilterTodos(true)"
-      >
-        active
-      </button>
-      <button
-        mat-flat-button
-        color="accent"
-        class="sort-buttons__button"
-        (click)="makeFilterTodos(false)"
-      >
-        completed
-      </button>
+      <div class="absolute-buttons">
+        <button
+          mat-flat-button
+          color="accent"
+          class="sort-buttons__button"
+          (click)="makeFilterTodos(null)"
+        >
+          all
+        </button>
+        <button
+          mat-flat-button
+          color="accent"
+          class="sort-buttons__button"
+          (click)="makeFilterTodos(true)"
+        >
+          active
+        </button>
+        <button
+          mat-flat-button
+          color="accent"
+          class="sort-buttons__button"
+          (click)="makeFilterTodos(false)"
+        >
+          completed
+        </button>
+      </div>
+      <ng-container *ngIf="completedTodoList$ | async as completedList">
+        <button
+          mat-flat-button
+          color="accent"
+          *ngIf="completedList.length > 0"
+          (click)="todoService.deleteCompleted()"
+        >
+          clear completed
+        </button>
+      </ng-container>
     </div>
-    <ng-container *ngIf="(completedTodoList$ | async) as completedList">
-    <button
-      mat-flat-button
-      color="accent"
-      *ngIf="completedList.length > 0"
-      (click)="todoService.deleteCompleted()"
-    >
-      clear completed
-    </button>
-  </ng-container>
   </div>
-</div>
 </ng-container>

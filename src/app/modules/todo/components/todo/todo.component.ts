@@ -33,6 +33,7 @@ export class TodoComponent implements OnInit {
   createTodo() {
     this.todoService
       .addTodo(this.createTodoForm.getRawValue().createTodo);
+      this.createTodoForm.reset();
   }
 
   deleteTodo() {
@@ -46,7 +47,7 @@ export class TodoComponent implements OnInit {
     if(this.currentTodo) {
       this.todoService
       .editTodo({
-        id: this.currentTodo!.id,
+        id: this.currentTodo.id,
         title: this.editTodoForm.getRawValue() || '',
         isCompleted: titleMode ? !this.currentTodo.isCompleted : this.currentTodo.isCompleted,
       });

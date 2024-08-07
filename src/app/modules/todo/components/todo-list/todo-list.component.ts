@@ -33,7 +33,8 @@ export class TodoListComponent implements OnInit {
     this.whichFilterActive = filterMode;
   }
 
-  changeIsTodosCompleted() {
+  changeAllTodos() {
+    this.todoService.completeOrActiveAllTodos(this.isTodosCompleted);
     this.isTodosCompleted = !this.isTodosCompleted;
   }
 }
