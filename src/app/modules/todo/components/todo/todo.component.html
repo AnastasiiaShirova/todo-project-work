@@ -3,16 +3,16 @@
     <mat-form-field class="example-full-width">
       <form [formGroup]="createTodoForm">
         <input
-        matInput
-        placeholder="What needs to be done?"
-        formControlName="createTodo"
-      />
+          matInput
+          placeholder="What needs to be done?"
+          formControlName="createTodo"
+        />
       </form>
     </mat-form-field>
     <button
       color="primary"
       mat-flat-button
-      (click)="createTodo(); createTodoForm.reset()"
+      (click)="createTodo()"
       [disabled]="createTodoForm.invalid"
       class="send-button"
     >
@@ -37,7 +37,7 @@
           </p>
         </mat-checkbox>
 
-        <div *ngIf="isOpened === true">
+        <div *ngIf="isOpened">
           <mat-form-field class="example-full-width">
             <input
               class="edit-todo-form"
@@ -49,18 +49,14 @@
         </div>
       </div>
       <div class="todo-functional">
-        <button
-          mat-flat-button
-          *ngIf="!isOpened"
-          (click)="isOpened = true"
-        >
+        <button mat-flat-button *ngIf="!isOpened" (click)="changeIsOpened()">
           edit
         </button>
 
         <button
           *ngIf="isOpened"
           mat-flat-button
-          (click)="editTodo(false); isOpened = false"
+          (click)="editTodo(false)"
           [disabled]="editTodoForm.invalid"
         >
           send

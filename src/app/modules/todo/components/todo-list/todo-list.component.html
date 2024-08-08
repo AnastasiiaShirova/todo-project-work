@@ -1,75 +1,84 @@
-<app-todo
+<ng-container [ngSwitch]="whichFilterActive">
+  <div *ngSwitchCase="null">
+    <app-todo
       class="todos"
-      *ngFor="let todo of getFilter(); let i = index"
+      *ngFor="let todo of todoList$ | async; trackBy: trackByItems"
       [currentTodo]="todo"
     ></app-todo>
-    <div
-      class="sort-buttons"
-      *ngIf="todoList.length > 0 || isFilterActive === true"
-    >
-      <div class="no-absolute">
-        <div class="no-absolute__complete-todo">
-          <p class="counter">
-            {{ todoService.activeTodosCounter | async }} items left
-          </p>
-          <button
-            mat-flat-button
-            color="primary"
-            *ngIf="todoList.length > 0"
-            (click)="
-              todoService.completeOrActiveAllTodos(isTodosCompleted);
-              isTodosCompleted = !isTodosCompleted
-            "
-            class="complete-all-button"
-          >
-            {{ isTodosCompleted ? "active all" : "complete all" }}
-          </button>
-        </div>
-        <div class="absolute-buttons">
-          <button
-            mat-flat-button
-            color="accent"
-            class="sort-buttons__button"
-            (click)="
-              isFilterActive = !isFilterActive;
-              whichFilterActive = null;
-              getFilter()
-            "
-          >
-            all
-          </button>
-          <button
-            mat-flat-button
-            color="accent"
-            class="sort-buttons__button"
-            (click)="
-              isFilterActive = !isFilterActive;
-              whichFilterActive = true;
-              getFilter()
-            "
-          >
-            active
-          </button>
-          <button
-            mat-flat-button
-            color="accent"
-            class="sort-buttons__button"
-            (click)="
-              isFilterActive = !isFilterActive;
-              whichFilterActive = false;
-              getFilter()
-            "
-          >
-            completed
-          </button>
-        </div>
+  </div>
+
+  <div *ngSwitchCase="true">
+    <app-todo
+      class="todos"
+      *ngFor="let todo of activeTodoList$ | async; trackBy: trackByItems"
+      [currentTodo]="todo"
+    ></app-todo>
+  </div>
+
+  <div *ngSwitchCase="false">
+    <app-todo
+      class="todos"
+      *ngFor="let todo of completedTodoList$ | async; trackBy: trackByItems"
+      [currentTodo]="todo"
+    ></app-todo>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="todoList$ | async as list">
+  <div class="sort-buttons" *ngIf="list.length > 0">
+    <div class="no-absolute">
+      <div class="no-absolute__complete-todo">
+        <p class="counter">
+          {{ todoService.activeTodosCounter | async }} items left
+        </p>
+
+        <button
+          mat-flat-button
+          color="primary"
+          *ngIf="list.length > 0"
+          (click)="changeAllTodos()"
+          class="complete-all-button"
+        >
+          {{ isTodosCompleted ? "active all" : "complete all" }}
+        </button>
+      </div>
+
+      <div class="absolute-buttons">
         <button
           mat-flat-button
           color="accent"
-          *ngIf="completedTodoList.length > 0"
+          class="sort-buttons__button"
+          (click)="makeFilterTodos(null)"
+        >
+          all
+        </button>
+        <button
+          mat-flat-button
+          color="accent"
+          class="sort-buttons__button"
+          (click)="makeFilterTodos(true)"
+        >
+          active
+        </button>
+        <button
+          mat-flat-button
+          color="accent"
+          class="sort-buttons__button"
+          (click)="makeFilterTodos(false)"
+        >
+          completed
+        </button>
+      </div>
+      <ng-container *ngIf="completedTodoList$ | async as completedList">
+        <button
+          mat-flat-button
+          color="accent"
+          *ngIf="completedList.length > 0"
           (click)="todoService.deleteCompleted()"
         >
           clear completed
         </button>
-      </div>
+      </ng-container>
     </div>
+  </div>
+</ng-container>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TodoService } from 'src/app/services/todo.service';
 import { Todo } from '../../../../shared/types/interfaces';
@@ -7,6 +7,8 @@ import { Todo } from '../../../../shared/types/interfaces';
   selector: 'app-todo',
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class TodoComponent implements OnInit {
   @Input() currentTodo?: Todo;
@@ -25,25 +27,35 @@ export class TodoComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.editTodoForm.patchValue(this.currentTodo?.title)
+    this.editTodoForm.patchValue(this.currentTodo?.title);
   }
 
   createTodo() {
     this.todoService
       .addTodo(this.createTodoForm.getRawValue().createTodo);
+      this.createTodoForm.reset();
   }
 
   deleteTodo() {
-    this.todoService
-      .deleteTodo(this.currentTodo!.id);
+    if(this.currentTodo) {
+      this.todoService
+      .deleteTodo(this.currentTodo.id);
+    }
   }
 
   editTodo(titleMode: boolean) {
+    if(this.currentTodo) {
       this.todoService
       .editTodo({
-        id: this.currentTodo!.id,
+        id: this.currentTodo.id,
         title: this.editTodoForm.getRawValue() || '',
-        isCompleted: titleMode ? !this.currentTodo!.isCompleted : this.currentTodo!.isCompleted,
-      })
+        isCompleted: titleMode ? !this.currentTodo.isCompleted : this.currentTodo.isCompleted,
+      });
+      this.isOpened = false;
+    }
+  }
+
+  changeIsOpened() {
+    this.isOpened = true;
   }
 }
