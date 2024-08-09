@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { TodoService } from 'src/app/services/todo.service';
-import { Todo } from 'src/app/shared/types/interfaces';
+import { TodoService } from '../../services/todo.service';
+import { Todo } from '../../shared/types/interfaces';
 
 @Component({
   selector: 'app-todo-list',
