@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TodoModule } from './modules/todo/todo.module';
+import { TodoModule } from 'todo-library';
 
 @NgModule({
   declarations: [AppComponent],
