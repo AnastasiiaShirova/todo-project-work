@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="whichFilterActive">
-  <div *ngSwitchCase="null">
+  <div *ngSwitchCase="filter.All">
     <app-todo
       class="todos"
       *ngFor="let todo of todoList$ | async; trackBy: trackByItems"
@@ -7,7 +7,7 @@
     ></app-todo>
   </div>
 
-  <div *ngSwitchCase="true">
+  <div *ngSwitchCase="filter.Active">
     <app-todo
       class="todos"
       *ngFor="let todo of activeTodoList$ | async; trackBy: trackByItems"
@@ -15,7 +15,7 @@
     ></app-todo>
   </div>
 
-  <div *ngSwitchCase="false">
+  <div *ngSwitchCase="filter.Completed">
     <app-todo
       class="todos"
       *ngFor="let todo of completedTodoList$ | async; trackBy: trackByItems"
@@ -48,7 +48,7 @@
           mat-flat-button
           color="accent"
           class="sort-buttons__button"
-          (click)="makeFilterTodos(null)"
+          (click)="makeFilterTodos(filter.All)"
         >
           all
         </button>
@@ -56,7 +56,7 @@
           mat-flat-button
           color="accent"
           class="sort-buttons__button"
-          (click)="makeFilterTodos(true)"
+          (click)="makeFilterTodos(filter.Active)"
         >
           active
         </button>
@@ -64,7 +64,7 @@
           mat-flat-button
           color="accent"
           class="sort-buttons__button"
-          (click)="makeFilterTodos(false)"
+          (click)="makeFilterTodos(filter.Completed)"
         >
           completed
         </button>

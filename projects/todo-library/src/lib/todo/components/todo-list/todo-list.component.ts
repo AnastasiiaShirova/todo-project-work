@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TodoService } from '../../services/todo.service';
-import { Todo } from '../../shared/types/interfaces';
+import { Filter, Todo } from '../../types/todo';
 
 @Component({
   selector: 'app-todo-list',
@@ -13,7 +13,8 @@ export class TodoListComponent implements OnInit {
   constructor(public todoService: TodoService) {}
 
   isTodosCompleted: boolean = false;
-  whichFilterActive: boolean | null = null;
+  whichFilterActive: Filter = Filter.All;
+  readonly filter = Filter;
 
   todoList$?: Observable<Todo[]>;
   activeTodoList$?: Observable<Todo[]>;
@@ -29,8 +30,8 @@ export class TodoListComponent implements OnInit {
     return item.id;
   }
 
-  makeFilterTodos(filterMode: null | boolean): void {
-    this.whichFilterActive = filterMode;
+  makeFilterTodos(mode: Filter): void {
+    this.whichFilterActive = mode;
   }
 
   changeAllTodos() {
