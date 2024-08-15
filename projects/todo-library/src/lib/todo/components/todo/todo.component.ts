@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { TodoService } from 'src/app/services/todo.service';
-import { Todo } from '../../../../shared/types/interfaces';
+import { TodoService } from '../../services/todo.service';
+import { Todo } from '../../shared/types/interfaces';
 
 @Component({
   selector: 'app-todo',
@@ -59,3 +59,4 @@ export class TodoComponent implements OnInit {
     this.isOpened = true;
   }
 }
+
