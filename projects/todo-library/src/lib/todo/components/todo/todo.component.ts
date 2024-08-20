@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TodoService } from '../../services/todo.service';
-import { Todo } from '../../shared/types/interfaces';
+import { Todo } from '../../types/todo';
 
 @Component({
   selector: 'app-todo',

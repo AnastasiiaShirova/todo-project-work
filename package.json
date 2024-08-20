@@ -4,9 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-with-library": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "install-library": "npm install ./dist/todo-library",
+    "prestart-with-library": "npm run install-library",
+    "preinstall-library": "ng build todo-library"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +25,7 @@
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
     "rxjs": "~7.5.0",
+    "todo-library": "file:dist/todo-library",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },

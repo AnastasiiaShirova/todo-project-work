@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoComponent } from './components/todo/todo.component';
-import { TodoListComponent } from '../../public-api';
+import { TodoListComponent } from './components/todo-list/todo-list.component';
+import { TodoService } from './services/todo.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -23,5 +24,6 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule, MatDividerModule, MatIconModule,
   ],
   exports: [TodoComponent, TodoListComponent],
+  providers: [TodoService],
 })
 export class TodoModule { }

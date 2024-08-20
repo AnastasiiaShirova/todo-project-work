@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Todo } from '../shared/types/interfaces';
+import { Todo } from '../types/todo';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class TodoService {
   constructor() {}
 
