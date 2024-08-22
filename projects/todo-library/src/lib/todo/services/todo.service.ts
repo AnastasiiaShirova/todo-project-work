@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Todo } from '../types/todo';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable } from 'rxjs';
 import { TodoApiService } from './todo-api.service';
 
 @Injectable()
 export class TodoService {
-
   constructor(private apiService: TodoApiService) {}
 
   todoList$: BehaviorSubject<Todo[]> = new BehaviorSubject<Todo[]>([]);
@@ -47,7 +46,7 @@ export class TodoService {
       this.apiService.deleteTodoFromBack(todo.id).subscribe(() => {
         currentTodoList.splice(index, 1);
         this.todoList$.next(currentTodoList);
-      })
+      });
     }
   }
 
@@ -63,7 +62,6 @@ export class TodoService {
       };
 
       this.apiService.editTodoBack(newTodo).subscribe((todo: Todo) => {
-        console.log(todo);
         currentTodoList.splice(oldTodoIndex, 1, todo);
         this.todoList$.next(currentTodoList);
       });
@@ -73,16 +71,23 @@ export class TodoService {
   completeOrActiveAllTodos(currentTodosMode: boolean) {
     let currentTodoList = this.todoList$.getValue();
 
-    currentTodoList = currentTodoList.map(
-      (todo) => (todo = { ...todo, completed: !currentTodosMode })
-    );
-    this.todoList$.next(currentTodoList);
+    let list: Observable<Todo>[] = currentTodoList
+      .filter((todo: Todo) => todo.completed === currentTodosMode)
+      .map((todo: Todo) => {
+        todo.completed = !currentTodosMode;
+        return this.apiService.editTodoBack(todo);
+      });
+
+    forkJoin(list).subscribe(() =>
+      this.todoList$.next(currentTodoList.map(((todo) => ({...todo, completed: !currentTodosMode})))));
   }
 
   deleteCompleted() {
     let currentTodoList = this.todoList$.getValue();
-    this.todoList$.next(
-      currentTodoList.filter((todo) => todo.completed === false)
-    );
+    let list = currentTodoList
+      .filter((todo) => todo.completed)
+      .map((todo) => this.apiService.deleteTodoFromBack(todo.id));
+
+    forkJoin(list).subscribe(() => this.todoList$.next(currentTodoList.filter((todo) => !todo.completed)));
   }
 }
