@@ -25,12 +25,12 @@
       <div class="checkbox-container">
         <mat-checkbox
           class="checkbox-container__checkbox"
-          [checked]="currentTodo.isCompleted"
+          [checked]="currentTodo.completed"
           (change)="editTodo(true)"
         >
           <p
             *ngIf="isOpened === false"
-            [class.text-decoration]="currentTodo.isCompleted"
+            [class.text-decoration]="currentTodo.completed"
             class="todo-title"
           >
             {{ currentTodo.title }}

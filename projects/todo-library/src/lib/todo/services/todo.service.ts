@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Todo } from '../types/todo';
 import { BehaviorSubject, map, Observable } from 'rxjs';
+import { TodoApiService } from './todo-api.service';
 
 @Injectable()
 export class TodoService {
-  constructor() {}
+
+  constructor(private apiService: TodoApiService) {}
 
   todoList$: BehaviorSubject<Todo[]> = new BehaviorSubject<Todo[]>([]);
 
   activeTodoList: Observable<Todo[]> = this.todoList$.pipe(
-    map((todos: Todo[]) => todos.filter((todo: Todo) => !todo.isCompleted))
+    map((todos: Todo[]) => todos.filter((todo: Todo) => !todo.completed))
   );
 
   activeTodosCounter: Observable<number> = this.activeTodoList.pipe(
@@ -17,27 +19,36 @@ export class TodoService {
   );
 
   completedTodoList: Observable<Todo[]> = this.todoList$.pipe(
-    map((todos: Todo[]) => todos.filter((todo: Todo) => todo.isCompleted))
+    map((todos: Todo[]) => todos.filter((todo: Todo) => todo.completed))
   );
+
+  fetchTodos(): void {
+    this.apiService.getTodos().subscribe((todos) => this.todoList$.next(todos));
+  }
 
   addTodo(title: string): void {
     let currentTodoList = this.todoList$.getValue();
-    let newTodo: Todo = {
+    let newTodo = {
       id: Date.now(),
       title,
-      isCompleted: false,
+      completed: false,
     };
-    currentTodoList.push(newTodo);
-    this.todoList$.next(currentTodoList);
+    this.apiService.postTodo(newTodo).subscribe((data) => {
+      currentTodoList.push(data);
+      this.todoList$.next(currentTodoList);
+    });
   }
 
   deleteTodo(id: number): void {
     let currentTodoList = this.todoList$.getValue();
     let index = currentTodoList.findIndex((todo) => todo.id === id);
+    let todo = currentTodoList[index];
     if (index !== -1) {
-      currentTodoList.splice(index, 1);
+      this.apiService.deleteTodoFromBack(todo.id).subscribe(() => {
+        currentTodoList.splice(index, 1);
+        this.todoList$.next(currentTodoList);
+      })
     }
-    this.todoList$.next(currentTodoList);
   }
 
   editTodo(editedTodo: Todo): void {
@@ -51,16 +62,19 @@ export class TodoService {
         ...editedTodo,
       };
 
-      currentTodoList.splice(oldTodoIndex, 1, newTodo);
-
-      this.todoList$.next(currentTodoList);
+      this.apiService.editTodoBack(newTodo).subscribe((todo: Todo) => {
+        console.log(todo);
+        currentTodoList.splice(oldTodoIndex, 1, todo);
+        this.todoList$.next(currentTodoList);
+      });
     }
   }
 
   completeOrActiveAllTodos(currentTodosMode: boolean) {
     let currentTodoList = this.todoList$.getValue();
+
     currentTodoList = currentTodoList.map(
-      (todo) => (todo = { ...todo, isCompleted: !currentTodosMode })
+      (todo) => (todo = { ...todo, completed: !currentTodosMode })
     );
     this.todoList$.next(currentTodoList);
   }
@@ -68,7 +82,7 @@ export class TodoService {
   deleteCompleted() {
     let currentTodoList = this.todoList$.getValue();
     this.todoList$.next(
-      currentTodoList.filter((todo) => todo.isCompleted === false)
+      currentTodoList.filter((todo) => todo.completed === false)
     );
   }
 }

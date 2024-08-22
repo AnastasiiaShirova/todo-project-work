@@ -1,7 +1,8 @@
 export interface Todo {
   id: number;
+  userId?: number;
   title: string;
-  isCompleted: boolean;
+  completed: boolean;
 }
 
 export enum Filter {

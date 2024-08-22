@@ -49,7 +49,7 @@ export class TodoComponent implements OnInit {
       .editTodo({
         id: this.currentTodo.id,
         title: this.editTodoForm.getRawValue() || '',
-        isCompleted: titleMode ? !this.currentTodo.isCompleted : this.currentTodo.isCompleted,
+        completed: titleMode ? !this.currentTodo.completed : this.currentTodo.completed,
       });
       this.isOpened = false;
     }
