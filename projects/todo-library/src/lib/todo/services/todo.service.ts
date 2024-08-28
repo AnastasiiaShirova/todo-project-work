@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Todo } from '../types/todo';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, tap } from 'rxjs';
+import { TodoApiService } from './todo-api.service';
 
 @Injectable()
 export class TodoService {
-  constructor() {}
+  constructor(private apiService: TodoApiService) {}
 
   todoList$: BehaviorSubject<Todo[]> = new BehaviorSubject<Todo[]>([]);
 
   activeTodoList: Observable<Todo[]> = this.todoList$.pipe(
-    map((todos: Todo[]) => todos.filter((todo: Todo) => !todo.isCompleted))
+    map((todos: Todo[]) => todos.filter((todo: Todo) => !todo.completed))
   );
 
   activeTodosCounter: Observable<number> = this.activeTodoList.pipe(
@@ -17,30 +18,43 @@ export class TodoService {
   );
 
   completedTodoList: Observable<Todo[]> = this.todoList$.pipe(
-    map((todos: Todo[]) => todos.filter((todo: Todo) => todo.isCompleted))
+    map((todos: Todo[]) => todos.filter((todo: Todo) => todo.completed))
   );
 
-  addTodo(title: string): void {
+  fetchTodos(): Observable<Todo[]> {
+    return this.apiService
+      .getTodos()
+      .pipe(tap((todos) => this.todoList$.next(todos)));
+  }
+
+  addTodo(title: string): Observable<Todo> {
     let currentTodoList = this.todoList$.getValue();
-    let newTodo: Todo = {
+    let newTodo = {
       id: Date.now(),
       title,
-      isCompleted: false,
+      completed: false,
     };
-    currentTodoList.push(newTodo);
-    this.todoList$.next(currentTodoList);
+    return this.apiService.postTodo(newTodo).pipe(
+      tap((todo) => {
+        currentTodoList.push(todo);
+        this.todoList$.next(currentTodoList);
+      })
+    );
   }
 
-  deleteTodo(id: number): void {
+  deleteTodo(id: number) {
     let currentTodoList = this.todoList$.getValue();
     let index = currentTodoList.findIndex((todo) => todo.id === id);
-    if (index !== -1) {
-      currentTodoList.splice(index, 1);
-    }
-    this.todoList$.next(currentTodoList);
+    let todo = currentTodoList[index];
+    return this.apiService.deleteTodoFromBack(todo.id).pipe(
+      tap(() => {
+        currentTodoList.splice(index, 1);
+        this.todoList$.next(currentTodoList);
+      })
+    );
   }
 
-  editTodo(editedTodo: Todo): void {
+  editTodo(editedTodo: Todo): Observable<Todo> {
     let currentTodoList = this.todoList$.getValue();
     let oldTodoIndex = currentTodoList.findIndex((t) => editedTodo.id === t.id);
 
@@ -51,24 +65,48 @@ export class TodoService {
         ...editedTodo,
       };
 
-      currentTodoList.splice(oldTodoIndex, 1, newTodo);
-
-      this.todoList$.next(currentTodoList);
+      return this.apiService.editTodoBack(newTodo).pipe(
+        tap((todo: Todo) => {
+          currentTodoList.splice(oldTodoIndex, 1, todo);
+          this.todoList$.next(currentTodoList);
+        })
+      );
     }
+    return this.apiService.editTodoBack(currentTodoList[oldTodoIndex]);
   }
 
-  completeOrActiveAllTodos(currentTodosMode: boolean) {
+  completeOrActiveAllTodos(currentTodosMode: boolean): Observable<Todo[]> {
     let currentTodoList = this.todoList$.getValue();
-    currentTodoList = currentTodoList.map(
-      (todo) => (todo = { ...todo, isCompleted: !currentTodosMode })
+
+    let list: Observable<Todo>[] = currentTodoList
+      .filter((todo: Todo) => todo.completed === currentTodosMode)
+      .map((todo: Todo) => {
+        todo.completed = !currentTodosMode;
+        return this.apiService.editTodoBack(todo);
+      });
+
+    return forkJoin(list).pipe(
+      tap(() => {
+        this.todoList$.next(
+          currentTodoList.map((todo) => ({
+            ...todo,
+            completed: !currentTodosMode,
+          }))
+        );
+      })
     );
-    this.todoList$.next(currentTodoList);
   }
 
   deleteCompleted() {
     let currentTodoList = this.todoList$.getValue();
-    this.todoList$.next(
-      currentTodoList.filter((todo) => todo.isCompleted === false)
+    let list = currentTodoList
+      .filter((todo) => todo.completed)
+      .map((todo) => this.apiService.deleteTodoFromBack(todo.id));
+
+    return forkJoin(list).pipe(
+      tap(() =>
+        this.todoList$.next(currentTodoList.filter((todo) => !todo.completed))
+      )
     );
   }
 }

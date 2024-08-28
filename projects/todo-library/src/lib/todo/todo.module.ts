@@ -10,20 +10,33 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-
+import { TodoApiService } from './services/todo-api.service';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { TodoApiInterceptor } from './interceptors/todo-api.interceptor';
+import { StorageInterceptor } from './interceptors/storage.interceptor';
+import { StorageService } from './services/storage.service';
 
 @NgModule({
-  declarations: [
-    TodoComponent,
-    TodoListComponent
-  ],
+  declarations: [TodoComponent, TodoListComponent],
   imports: [
     CommonModule,
-    FormsModule, MatFormFieldModule, MatInputModule,
-    ReactiveFormsModule, MatCheckboxModule,
-    MatButtonModule, MatDividerModule, MatIconModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatIconModule,
+    HttpClientModule,
   ],
   exports: [TodoComponent, TodoListComponent],
-  providers: [TodoService],
+  providers: [
+    TodoService,
+    TodoApiService,
+    StorageService,
+    { provide: HTTP_INTERCEPTORS, useClass: StorageInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TodoApiInterceptor, multi: true },
+  ],
 })
-export class TodoModule { }
+export class TodoModule {}
