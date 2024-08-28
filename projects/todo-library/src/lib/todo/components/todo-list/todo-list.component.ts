@@ -21,7 +21,7 @@ export class TodoListComponent implements OnInit {
   completedTodoList$?: Observable<Todo[]>;
 
   ngOnInit(): void {
-    this.todoService.fetchTodos();
+    this.todoService.fetchTodos().subscribe();
     this.todoList$ = this.todoService.todoList$;
     this.activeTodoList$ = this.todoService.activeTodoList;
     this.completedTodoList$ = this.todoService.completedTodoList;
@@ -36,7 +36,11 @@ export class TodoListComponent implements OnInit {
   }
 
   changeAllTodos() {
-    this.todoService.completeOrActiveAllTodos(this.isTodosCompleted);
+    this.todoService.completeOrActiveAllTodos(this.isTodosCompleted).subscribe();
     this.isTodosCompleted = !this.isTodosCompleted;
+  }
+
+  deleteCompleted() {
+    this.todoService.deleteCompleted().subscribe();
   }
 }

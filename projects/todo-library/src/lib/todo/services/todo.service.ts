@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Todo } from '../types/todo';
-import { BehaviorSubject, forkJoin, map, Observable } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, tap } from 'rxjs';
 import { TodoApiService } from './todo-api.service';
 
 @Injectable()
@@ -21,36 +21,40 @@ export class TodoService {
     map((todos: Todo[]) => todos.filter((todo: Todo) => todo.completed))
   );
 
-  fetchTodos(): void {
-    this.apiService.getTodos().subscribe((todos) => this.todoList$.next(todos));
+  fetchTodos(): Observable<Todo[]> {
+    return this.apiService
+      .getTodos()
+      .pipe(tap((todos) => this.todoList$.next(todos)));
   }
 
-  addTodo(title: string): void {
+  addTodo(title: string): Observable<Todo> {
     let currentTodoList = this.todoList$.getValue();
     let newTodo = {
       id: Date.now(),
       title,
       completed: false,
     };
-    this.apiService.postTodo(newTodo).subscribe((data) => {
-      currentTodoList.push(data);
-      this.todoList$.next(currentTodoList);
-    });
+    return this.apiService.postTodo(newTodo).pipe(
+      tap((todo) => {
+        currentTodoList.push(todo);
+        this.todoList$.next(currentTodoList);
+      })
+    );
   }
 
-  deleteTodo(id: number): void {
+  deleteTodo(id: number) {
     let currentTodoList = this.todoList$.getValue();
     let index = currentTodoList.findIndex((todo) => todo.id === id);
     let todo = currentTodoList[index];
-    if (index !== -1) {
-      this.apiService.deleteTodoFromBack(todo.id).subscribe(() => {
+    return this.apiService.deleteTodoFromBack(todo.id).pipe(
+      tap(() => {
         currentTodoList.splice(index, 1);
         this.todoList$.next(currentTodoList);
-      });
-    }
+      })
+    );
   }
 
-  editTodo(editedTodo: Todo): void {
+  editTodo(editedTodo: Todo): Observable<Todo> {
     let currentTodoList = this.todoList$.getValue();
     let oldTodoIndex = currentTodoList.findIndex((t) => editedTodo.id === t.id);
 
@@ -61,14 +65,17 @@ export class TodoService {
         ...editedTodo,
       };
 
-      this.apiService.editTodoBack(newTodo).subscribe((todo: Todo) => {
-        currentTodoList.splice(oldTodoIndex, 1, todo);
-        this.todoList$.next(currentTodoList);
-      });
+      return this.apiService.editTodoBack(newTodo).pipe(
+        tap((todo: Todo) => {
+          currentTodoList.splice(oldTodoIndex, 1, todo);
+          this.todoList$.next(currentTodoList);
+        })
+      );
     }
+    return this.apiService.editTodoBack(currentTodoList[oldTodoIndex]);
   }
 
-  completeOrActiveAllTodos(currentTodosMode: boolean) {
+  completeOrActiveAllTodos(currentTodosMode: boolean): Observable<Todo[]> {
     let currentTodoList = this.todoList$.getValue();
 
     let list: Observable<Todo>[] = currentTodoList
@@ -78,8 +85,16 @@ export class TodoService {
         return this.apiService.editTodoBack(todo);
       });
 
-    forkJoin(list).subscribe(() =>
-      this.todoList$.next(currentTodoList.map(((todo) => ({...todo, completed: !currentTodosMode})))));
+    return forkJoin(list).pipe(
+      tap(() => {
+        this.todoList$.next(
+          currentTodoList.map((todo) => ({
+            ...todo,
+            completed: !currentTodosMode,
+          }))
+        );
+      })
+    );
   }
 
   deleteCompleted() {
@@ -88,6 +103,10 @@ export class TodoService {
       .filter((todo) => todo.completed)
       .map((todo) => this.apiService.deleteTodoFromBack(todo.id));
 
-    forkJoin(list).subscribe(() => this.todoList$.next(currentTodoList.filter((todo) => !todo.completed)));
+    return forkJoin(list).pipe(
+      tap(() =>
+        this.todoList$.next(currentTodoList.filter((todo) => !todo.completed))
+      )
+    );
   }
 }

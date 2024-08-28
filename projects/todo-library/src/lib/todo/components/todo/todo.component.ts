@@ -32,14 +32,14 @@ export class TodoComponent implements OnInit {
 
   createTodo() {
     this.todoService
-      .addTodo(this.createTodoForm.getRawValue().createTodo);
+      .addTodo(this.createTodoForm.getRawValue().createTodo).subscribe();
       this.createTodoForm.reset();
   }
 
   deleteTodo() {
     if(this.currentTodo) {
       this.todoService
-      .deleteTodo(this.currentTodo.id);
+      .deleteTodo(this.currentTodo.id).subscribe();
     }
   }
 
@@ -50,7 +50,7 @@ export class TodoComponent implements OnInit {
         id: this.currentTodo.id,
         title: this.editTodoForm.getRawValue() || '',
         completed: titleMode ? !this.currentTodo.completed : this.currentTodo.completed,
-      });
+      }).subscribe();
       this.isOpened = false;
     }
   }
