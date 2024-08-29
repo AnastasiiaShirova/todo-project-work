@@ -28,7 +28,18 @@ export class StorageInterceptor implements HttpInterceptor {
             return response.clone();
 
           case 'GET':
-            return response.clone({ body: this.storageService.getData() });
+            return response.clone({
+              body: this.storageService
+                .getData()
+                .filter(
+                  (todos) => {
+                    if(request.params.has('completed')) {
+                      return todos.completed === !!request.params.get('completed');
+                    }
+                    return true;
+                  }
+                ),
+            });
 
           case 'DELETE':
             let matchReg = request.url.match(/[0-9]/g);

@@ -32,21 +32,21 @@ export class TodoComponent implements OnInit {
 
   createTodo() {
     this.todoService
-      .addTodo(this.createTodoForm.getRawValue().createTodo).subscribe();
+      .addTodo$(this.createTodoForm.getRawValue().createTodo).subscribe();
       this.createTodoForm.reset();
   }
 
   deleteTodo() {
     if(this.currentTodo) {
       this.todoService
-      .deleteTodo(this.currentTodo.id).subscribe();
+      .deleteTodo$(this.currentTodo.id).subscribe();
     }
   }
 
   editTodo(titleMode: boolean) {
     if(this.currentTodo) {
       this.todoService
-      .editTodo({
+      .editTodo$({
         id: this.currentTodo.id,
         title: this.editTodoForm.getRawValue() || '',
         completed: titleMode ? !this.currentTodo.completed : this.currentTodo.completed,
