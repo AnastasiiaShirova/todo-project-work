@@ -28,18 +28,22 @@ export class StorageInterceptor implements HttpInterceptor {
             return response.clone();
 
           case 'GET':
-            return response.clone({
-              body: this.storageService
-                .getData()
-                .filter(
-                  (todos) => {
-                    if(request.params.has('completed')) {
-                      return todos.completed === !!request.params.get('completed');
+            if (request.params.has('completed')) {
+              return response.clone({
+                body: this.storageService
+                  .getData()
+                  .filter(
+                    (todos) => {
+                      const isCompletedFilter = request.params.get('completed') === 'true';
+                      return todos.completed === isCompletedFilter;
                     }
-                    return true;
-                  }
-                ),
-            });
+                  ),
+              });
+            } else {
+              return response.clone({
+                body: this.storageService.getData(),
+              });
+            }
 
           case 'DELETE':
             let matchReg = request.url.match(/[0-9]/g);

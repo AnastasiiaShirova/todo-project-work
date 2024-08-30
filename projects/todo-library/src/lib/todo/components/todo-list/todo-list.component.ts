@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { filter, map, Observable } from 'rxjs';
+import { filter, map, Observable, tap } from 'rxjs';
 import { TodoService } from '../../services/todo.service';
 import { Filter, Todo } from '../../types/todo';
 
@@ -17,17 +17,18 @@ export class TodoListComponent implements OnInit {
   readonly filter = Filter;
 
   todoList$?: Observable<Todo[]>;
-  activeTodosCounter$ = this.todoList$?.pipe(
-    map((todos) => todos.filter((todo) => todo.completed === false).length)
-  );
-
-  checkedCompleted$ = this.todoList$?.pipe(
-    map((todos) => todos.filter((todo) => todo.completed))
-  );
+  activeTodosCounter$?: Observable<number>;
+  checkedCompleted$?: Observable<Todo[]>;
 
   ngOnInit(): void {
     this.todoService.fetchTodos$(this.whichFilterActive).subscribe();
     this.todoList$ = this.todoService.todoList$;
+    this.activeTodosCounter$ = this.todoList$?.pipe(
+      map((todos) => todos.filter((todo) => todo.completed === false).length)
+    );
+    this.checkedCompleted$ = this.todoList$?.pipe(
+      map((todos) => todos.filter((todo) => todo.completed))
+    );
   }
 
   trackByItems(_: number, item: Todo) {
