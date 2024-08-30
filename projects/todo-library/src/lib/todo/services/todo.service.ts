@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Filter, Todo } from '../types/todo';
-import { BehaviorSubject, forkJoin, map, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  forkJoin,
+  Observable,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { TodoApiService } from './todo-api.service';
 
 @Injectable()
 export class TodoService {
-  constructor(private apiService: TodoApiService) {}
+  constructor(private apiService: TodoApiService) {
+    this.isNeedFetch$
+      .pipe(switchMap((mode) => this.apiService.getTodos$(mode)))
+      .subscribe((todos) => this.todoList$.next(todos));
+  }
 
   todoList$: BehaviorSubject<Todo[]> = new BehaviorSubject<Todo[]>([]);
 
-  fetchTodos$(filter: Filter): Observable<Todo[]> {
-    return this.apiService
-      .getTodos$(filter)
-      .pipe(tap((todos) => this.todoList$.next(todos)));
-  }
+  isNeedFetch$ = new BehaviorSubject<Filter>(Filter.All);
 
   addTodo$(title: string): Observable<Todo> {
     let currentTodoList = this.todoList$.getValue();

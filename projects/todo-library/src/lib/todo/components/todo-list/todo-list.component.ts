@@ -12,16 +12,13 @@ import { Filter, Todo } from '../../types/todo';
 export class TodoListComponent implements OnInit {
   constructor(public todoService: TodoService) {}
 
-  isTodosCompleted: boolean = false;
-  whichFilterActive: Filter = Filter.All;
   readonly filter = Filter;
-
+  isTodosCompleted: boolean = false;
   todoList$?: Observable<Todo[]>;
   activeTodosCounter$?: Observable<number>;
   checkedCompleted$?: Observable<Todo[]>;
 
   ngOnInit(): void {
-    this.todoService.fetchTodos$(this.whichFilterActive).subscribe();
     this.todoList$ = this.todoService.todoList$;
     this.activeTodosCounter$ = this.todoList$?.pipe(
       map((todos) => todos.filter((todo) => todo.completed === false).length)
@@ -36,8 +33,7 @@ export class TodoListComponent implements OnInit {
   }
 
   makeFilterTodos(mode: Filter): void {
-    this.whichFilterActive = mode;
-    this.todoService.fetchTodos$(this.whichFilterActive).subscribe();
+    this.todoService.isNeedFetch$.next(mode);
   }
 
   changeAllTodos() {

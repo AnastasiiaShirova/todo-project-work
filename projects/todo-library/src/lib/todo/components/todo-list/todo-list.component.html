@@ -7,7 +7,7 @@
 </div>
 
 <ng-container *ngIf="todoList$ | async as list">
-  <div class="sort-buttons" *ngIf="list.length > 0">
+  <div class="sort-buttons">
     <div class="no-absolute">
       <div class="no-absolute__complete-todo">
         <p class="counter">{{ activeTodosCounter$ | async }} items left</p>
