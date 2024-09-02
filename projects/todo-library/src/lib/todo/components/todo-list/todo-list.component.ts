@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { filter, map, Observable, tap } from 'rxjs';
 import { TodoService } from '../../services/todo.service';
 import { Filter, Todo } from '../../types/todo';
 
@@ -12,35 +12,38 @@ import { Filter, Todo } from '../../types/todo';
 export class TodoListComponent implements OnInit {
   constructor(public todoService: TodoService) {}
 
-  isTodosCompleted: boolean = false;
-  whichFilterActive: Filter = Filter.All;
   readonly filter = Filter;
-
+  isTodosCompleted: boolean = false;
   todoList$?: Observable<Todo[]>;
-  activeTodoList$?: Observable<Todo[]>;
-  completedTodoList$?: Observable<Todo[]>;
+  activeTodosCounter$?: Observable<number>;
+  checkedCompleted$?: Observable<Todo[]>;
 
   ngOnInit(): void {
-    this.todoService.fetchTodos().subscribe();
     this.todoList$ = this.todoService.todoList$;
-    this.activeTodoList$ = this.todoService.activeTodoList;
-    this.completedTodoList$ = this.todoService.completedTodoList;
+    this.activeTodosCounter$ = this.todoList$?.pipe(
+      map((todos) => todos.filter((todo) => todo.completed === false).length)
+    );
+    this.checkedCompleted$ = this.todoList$?.pipe(
+      map((todos) => todos.filter((todo) => todo.completed))
+    );
   }
 
-  trackByItems(index: number, item: Todo) {
+  trackByItems(_: number, item: Todo) {
     return item.id;
   }
 
   makeFilterTodos(mode: Filter): void {
-    this.whichFilterActive = mode;
+    this.todoService.isNeedFetch$.next(mode);
   }
 
   changeAllTodos() {
-    this.todoService.completeOrActiveAllTodos(this.isTodosCompleted).subscribe();
+    this.todoService
+      .completeOrActiveAllTodos$(this.isTodosCompleted)
+      .subscribe();
     this.isTodosCompleted = !this.isTodosCompleted;
   }
 
   deleteCompleted() {
-    this.todoService.deleteCompleted().subscribe();
+    this.todoService.deleteCompleted$().subscribe();
   }
 }

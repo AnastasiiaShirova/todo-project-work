@@ -1,36 +1,16 @@
-<ng-container [ngSwitch]="whichFilterActive">
-  <div *ngSwitchCase="filter.All">
-    <app-todo
-      class="todos"
-      *ngFor="let todo of todoList$ | async; trackBy: trackByItems"
-      [currentTodo]="todo"
-    ></app-todo>
-  </div>
-
-  <div *ngSwitchCase="filter.Active">
-    <app-todo
-      class="todos"
-      *ngFor="let todo of activeTodoList$ | async; trackBy: trackByItems"
-      [currentTodo]="todo"
-    ></app-todo>
-  </div>
-
-  <div *ngSwitchCase="filter.Completed">
-    <app-todo
-      class="todos"
-      *ngFor="let todo of completedTodoList$ | async; trackBy: trackByItems"
-      [currentTodo]="todo"
-    ></app-todo>
-  </div>
-</ng-container>
+<div>
+  <app-todo
+    class="todos"
+    *ngFor="let todo of todoList$ | async; trackBy: trackByItems"
+    [currentTodo]="todo"
+  ></app-todo>
+</div>
 
 <ng-container *ngIf="todoList$ | async as list">
-  <div class="sort-buttons" *ngIf="list.length > 0">
+  <div class="sort-buttons">
     <div class="no-absolute">
       <div class="no-absolute__complete-todo">
-        <p class="counter">
-          {{ todoService.activeTodosCounter | async }} items left
-        </p>
+        <p class="counter">{{ activeTodosCounter$ | async }} items left</p>
 
         <button
           mat-flat-button
@@ -69,7 +49,7 @@
           completed
         </button>
       </div>
-      <ng-container *ngIf="completedTodoList$ | async as completedList">
+      <ng-container *ngIf="checkedCompleted$ | async as completedList">
         <button
           mat-flat-button
           color="accent"
@@ -82,4 +62,3 @@
     </div>
   </div>
 </ng-container>
-
